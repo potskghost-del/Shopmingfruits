@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mingfruit Shop - Dịch Vụ Robux Uy Tín</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-color: #0f0f13;
+            --container-bg: #1a1a24;
+            --primary: #00ff88;
+            --primary-hover: #00cc6a;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --danger: #ff4757;
+            --admin-bg: #2d132c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        /* Navbar */
+        header {
+            background-color: var(--container-bg);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #2a2a35;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .balance {
+            display: flex;
+            gap: 15px;
+            background: #2a2a35;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .balance span { color: var(--primary); }
+
+        button {
+            background-color: var(--primary);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+        .btn-danger:hover { background-color: #ff2a3f; }
+
+        /* Containers */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            display: none;
+        }
+
+        .container.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            border: 1px solid #2a2a35;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a2a35;
+            padding-bottom: 10px;
+            color: var(--primary);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #2a2a35;
+            border: 1px solid #3a3a45;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .price-display {
+            font-size: 18px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px dashed var(--primary);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .price-display span {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: var(--admin-bg);
+            border: 2px solid #e94560;
+        }
+
+        .admin-panel h2 { color: #e94560; border-bottom-color: #e94560; }
+        
+        .admin-search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .admin-search-box input {
+            flex: 1;
+            padding: 12px;
+            background: #1a0b19;
+            border: 1px solid #e94560;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .admin-result-box {
+            background: #1a0b19;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px dashed #e94560;
+            display: none;
+        }
+
+        .admin-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* Auth Screen */
+        .auth-wrapper {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header" style="display: none;">
+        <div class="logo">Mingfruit Shop</div>
+        <div class="user-info">
+            <div class="balance">
+                <div title="Số dư tiền nạp">VND: <span id="nav-vnd">0</span>đ</div>
+                <div title="Số dư Robux">R$: <span id="nav-robux">0</span></div>
+            </div>
+            <div style="color: var(--text-muted);">Xin chào, <b id="nav-username" style="color: #fff;"></b>!</div>
+            <button onclick="showAdminPrompt()" style="background-color: #8a2be2; color: #fff;">Quản Trị</button>
+            <button onclick="logout()" class="btn-danger">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div id="auth-container" class="container auth-wrapper active">
+        <div class="card">
+            <h2 id="auth-title">Đăng Nhập</h2>
+            <div class="form-group">
+                <label>Tài khoản</label>
+                <input type="text" id="auth-username" placeholder="Nhập tên tài khoản...">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="auth-password" placeholder="Nhập mật khẩu...">
+            </div>
+            <button style="width: 100%; margin-top: 10px;" onclick="handleAuth()">Xác Nhận</button>
+            <p style="text-align: center; margin-top: 15px; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
+                Chưa có tài khoản? <span style="color: var(--primary);">Đăng ký ngay</span>
+            </p>
+        </div>
+    </div>
+
+    <div id="shop-container" class="container">
+        <div class="card">
+            <h2>Nạp Thẻ Cào</h2>
+            <form onsubmit="submitTopup(event)">
+                <div class="form-group">
+                    <label>Loại Thẻ</label>
+                    <select name="Loại Thẻ" required>
+                        <option value="Viettel">Viettel</option>
+                        <option value="Vinaphone">Vinaphone</option>
+                        <option value="Mobifone">Mobifone</option>
+                        <option value="Zing">Zing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mệnh Giá</label>
+                    <select name="Mệnh Giá" required>
+                        <option value="10000">10.000 VNĐ</option>
+                        <option value="20000">20.000 VNĐ</option>
+                        <option value="50000">50.000 VNĐ</option>
+                        <option value="100000">100.000 VNĐ</option>
+                        <option value="200000">200.000 VNĐ</option>
+                        <option value="500000">500.000 VNĐ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Số Sê-ri</label>
+                    <input type="text" name="Sê-ri" required placeholder="Nhập số serial của thẻ...">
+                </div>
+                <div class="form-group">
+                    <label>Mã Thẻ</label>
+                    <input type="text" name="Mã Thẻ" required placeholder="Nhập mã thẻ cào...">
+                </div>
+                <button type="submit" style="width: 100%;">Nạp Thẻ Ngay</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Mua Robux Bằng Gamepass (10k VNĐ = 60 Robux)</h2>
+            <form onsubmit="submitPurchase(event)">
+                <div class="form-group">
+                    <label>Link Gamepass (Passes URL)</label>
+                    <input type="url" name="Link Gamepass" required placeholder="https://www.roblox.com/game-pass/...">
+                </div>
+                <div class="form-group">
+                    <label>Số Robux Muốn Mua</label>
+                    <input type="number" id="robux-amount" name="Số Robux Đặt Mua" required placeholder="Nhập số lượng..." min="1" oninput="calculatePrice()">
+                </div>
+                
+                <div class="price-display">
+                    Số tiền cần thanh toán: <br>
+                    <span id="calc-price">0</span> VNĐ
+                </div>
+
+                <button type="submit" style="width: 100%; background-color: #ffa502;">Thanh Toán & Mua</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-container" class="container">
+        <div class="card admin-panel">
+            <h2>Hệ Thống Quản Trị (Admin Panel)</h2>
+            <button onclick="closeAdmin()" class="btn-danger" style="margin-bottom: 20px;">Đóng Bảng Admin</button>
+            
+            <div class="admin-search-box">
+                <input type="text" id="admin-search-input" placeholder="Nhập tên tài khoản cần kiểm tra...">
+                <button onclick="searchAdminUser()" style="background-color: #e94560; color: white;">Tìm Tài Khoản</button>
+            </div>
+
+            <div id="admin-result-box" class="admin-result-box">
+                <h3 style="margin-bottom: 15px;">Thông tin tài khoản: <span id="admin-disp-user" style="color: #00ff88;">---</span></h3>
+                <p>Số dư VNĐ: <b style="color: #00ff88; font-size: 18px;"><span id="admin-disp-vnd">0</span>đ</b></p>
+                <p>Số dư Robux: <b style="color: #ffa502; font-size: 18px;">R$ <span id="admin-disp-rb">0</span></b></p>
+
+                <div class="admin-actions-grid">
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" id="admin-input-vnd" placeholder="Nhập số tiền..." class="form-group input" style="width: 100%; padding: 10px;">
+                        <button onclick="updateBalance('vnd')" style="white-space: nowrap;">Cộng/Trừ VNĐ</button>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" id="admin-input-rb" placeholder="Nhập số Robux..." class="form-group input" style="width: 100%; padding: 10px;">
+                        <button onclick="updateBalance('robux')" style="background-color: #ffa502; white-space: nowrap;">Cộng/Trừ R$</button>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">*Mẹo: Nhập số âm (ví dụ: -10000) để trừ số dư.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Cấu hình
+        const FORMSPREE_URL = "https://formspree.io/f/xkoqpjgj";
+        const ADMIN_PASS = "mingfruit36";
+        const RATE = 10000 / 60; // 10k VND = 60 Robux
+
+        // Khởi tạo Database giả lập
+        let usersDB = JSON.parse(localStorage.getItem('mingfruit_users')) || {};
+        let currentUser = localStorage.getItem('mingfruit_current_user') || null;
+        let isLoginMode = true;
+        let currentAdminUser = null; // Lưu trữ tài khoản đang được admin xem
+
+        // Định dạng tiền tệ
+        const formatMoney = (amount) => new Intl.NumberFormat('vi-VN').format(amount);
+
+        // Khởi động
+        window.onload = () => {
+            if (currentUser && usersDB[currentUser]) {
+                showShop();
+            } else {
+                showAuth();
+            }
+        }
+
+        // --- HỆ THỐNG TÀI KHOẢN ---
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? "Đăng Nhập" : "Đăng Ký";
+            document.querySelector('.auth-wrapper p').innerHTML = isLoginMode 
+                ? 'Chưa có tài khoản? <span style="color: var(--primary);">Đăng ký ngay</span>'
+                : 'Đã có tài khoản? <span style="color: var(--primary);">Đăng nhập</span>';
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('auth-username').value.trim();
+            const pass = document.getElementById('auth-password').value.trim();
+
+            if(!user || !pass) return alert("Vui lòng nhập đầy đủ thông tin!");
+
+            if (isLoginMode) {
+                if(usersDB[user] && usersDB[user].password === pass) {
+                    currentUser = user;
+                    localStorage.setItem('mingfruit_current_user', user);
+                    showShop();
+                } else {
+                    alert("Sai tài khoản hoặc mật khẩu!");
+                }
+            } else {
+                if(usersDB[user]) return alert("Tên tài khoản đã tồn tại!");
+                usersDB[user] = { password: pass, vnd: 0, robux: 0 };
+                saveDB();
+                alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                toggleAuthMode();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('mingfruit_current_user');
+            showAuth();
+        }
+
+        // --- ĐIỀU HƯỚNG GIAO DIỆN ---
+        function showAuth() {
+            document.getElementById('auth-container').classList.add('active');
+            document.getElementById('shop-container').classList.remove('active');
+            document.getElementById('admin-container').classList.remove('active');
+            document.getElementById('main-header').style.display = 'none';
+        }
+
+        function showShop() {
+            document.getElementById('auth-container').classList.remove('active');
+            document.getElementById('shop-container').classList.add('active');
+            document.getElementById('admin-container').classList.remove('active');
+            document.getElementById('main-header').style.display = 'flex';
+            updateNavbar();
+        }
+
+        function updateNavbar() {
+            const uData = usersDB[currentUser];
+            if(!uData) return;
+            document.getElementById('nav-username').innerText = currentUser;
+            document.getElementById('nav-vnd').innerText = formatMoney(uData.vnd);
+            document.getElementById('nav-robux').innerText = formatMoney(uData.robux);
+        }
+
+        function saveDB() {
+            localStorage.setItem('mingfruit_users', JSON.stringify(usersDB));
+        }
+
+        // --- TÍNH TOÁN & GỬI ĐƠN ---
+        function calculatePrice() {
+            const rbInput = document.getElementById('robux-amount').value;
+            const priceDiv = document.getElementById('calc-price');
+            if (rbInput && rbInput > 0) {
+                const totalVND = Math.ceil(rbInput * RATE);
+                priceDiv.innerText = formatMoney(totalVND);
+            } else {
+                priceDiv.innerText = "0";
+            }
+        }
+
+        async function submitTopup(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            data.append("Loại Đơn", "NẠP THẺ");
+            data.append("Tài khoản yêu cầu", currentUser);
+
+            const btn = form.querySelector('button');
+            btn.innerText = "Đang xử lý...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(FORMSPREE_URL, {
+                    method: 'POST', body: data, headers: { 'Accept': 'application/json' }
+                });
+                if(response.ok) {
+                    alert("Đã gửi đơn nạp thẻ! Admin sẽ kiểm tra và cộng số dư sớm nhất.");
+                    form.reset();
+                } else { alert("Lỗi khi gửi đơn."); }
+            } catch (err) { alert("Lỗi mạng."); }
+            
+            btn.innerText = "Nạp Thẻ Ngay";
+            btn.disabled = false;
+        }
+
+        async function submitPurchase(e) {
+            e.preventDefault();
+            const rbInput = parseInt(document.getElementById('robux-amount').value);
+            const totalVND = Math.ceil(rbInput * RATE);
+            const uData = usersDB[currentUser];
+
+            if (uData.vnd < totalVND) {
+                alert(`Bạn không đủ tiền! Cần ${formatMoney(totalVND)}đ, nhưng bạn chỉ có ${formatMoney(uData.vnd)}đ.`);
+                return;
+            }
+
+            const form = e.target;
+            const data = new FormData(form);
+            data.append("Loại Đơn", "MUA ROBUX (GAMEPASS)");
+            data.append("Tài khoản yêu cầu", currentUser);
+            data.append("Tổng tiền cần trừ", totalVND + " VNĐ");
+
+            const btn = form.querySelector('button');
+            btn.innerText = "Đang xử lý...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(FORMSPREE_URL, {
+                    method: 'POST', body: data, headers: { 'Accept': 'application/json' }
+                });
+                if(response.ok) {
+                    usersDB[currentUser].vnd -= totalVND;
+                    saveDB();
+                    updateNavbar();
+                    alert("Giao dịch đã gửi! Admin sẽ chuyển Robux cho bạn.");
+                    form.reset();
+                    document.getElementById('calc-price').innerText = "0";
+                } else { alert("Lỗi khi gửi đơn."); }
+            } catch (err) { alert("Lỗi mạng."); }
+
+            btn.innerText = "Thanh Toán & Mua";
+            btn.disabled = false;
+        }
+
+        // --- HỆ THỐNG ADMIN TÌM KIẾM TÀI KHOẢN ---
+        function showAdminPrompt() {
+            const pass = prompt("Nhập mật khẩu quản trị viên:");
+            if (pass === ADMIN_PASS) {
+                document.getElementById('shop-container').classList.remove('active');
+                document.getElementById('admin-container').classList.add('active');
+                document.getElementById('admin-result-box').style.display = 'none'; // Ẩn lúc mới mở
+                document.getElementById('admin-search-input').value = ''; // Xóa ô tìm kiếm
+            } else if (pass !== null) {
+                alert("Sai mật khẩu quản trị!");
+            }
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-container').classList.remove('active');
+            document.getElementById('shop-container').classList.add('active');
+            updateNavbar();
+        }
+
+        function searchAdminUser() {
+            const searchInput = document.getElementById('admin-search-input').value.trim();
+            if(!searchInput) return alert("Vui lòng nhập tên tài khoản!");
+
+            // Nếu tài khoản không tồn tại, hỏi admin có muốn tự động tạo không
+            if(!usersDB[searchInput]) {
+                const cf = confirm(`Tài khoản "${searchInput}" chưa tồn tại trong hệ thống. Bạn có muốn tạo mới để nạp tiền cho người này không?`);
+                if(cf) {
+                    usersDB[searchInput] = { password: "admin_created", vnd: 0, robux: 0 };
+                    saveDB();
+                    alert("Đã tạo tài khoản thành công!");
+                } else {
+                    return; // Hủy tìm kiếm
+                }
+            }
+
+            // Hiển thị thông tin
+            currentAdminUser = searchInput;
+            document.getElementById('admin-result-box').style.display = 'block';
+            refreshAdminDisplay();
+        }
+
+        function refreshAdminDisplay() {
+            if(!currentAdminUser || !usersDB[currentAdminUser]) return;
+            const userData = usersDB[currentAdminUser];
+            
+            document.getElementById('admin-disp-user').innerText = currentAdminUser;
+            document.getElementById('admin-disp-vnd').innerText = formatMoney(userData.vnd);
+            document.getElementById('admin-disp-rb').innerText = formatMoney(userData.robux);
+        }
+
+        function updateBalance(type) {
+            if(!currentAdminUser) return;
+
+            const inputId = type === 'vnd' ? 'admin-input-vnd' : 'admin-input-rb';
+            const inputVal = document.getElementById(inputId).value;
+            const amount = parseInt(inputVal);
+
+            if(isNaN(amount)) {
+                return alert("Vui lòng nhập một số hợp lệ!");
+            }
+
+            // Thực hiện cộng / trừ
+            usersDB[currentAdminUser][type] += amount;
+
+            // Chặn việc số dư bị âm
+            if(usersDB[currentAdminUser][type] < 0) {
+                usersDB[currentAdminUser][type] = 0;
+            }
+
+            saveDB();
+            refreshAdminDisplay(); // Cập nhật lại số hiển thị
+            
+            alert(`Thao tác thành công! Đã ${amount >= 0 ? 'cộng' : 'trừ'} ${formatMoney(Math.abs(amount))} ${type.toUpperCase()}`);
+            document.getElementById(inputId).value = ''; // Làm sạch ô input
+        }
+    </script>
+</body>
+</html>
