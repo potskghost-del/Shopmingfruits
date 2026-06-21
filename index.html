@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mingfruit Shop - Dịch Vụ Robux Uy Tín</title>
     <style>
+        body {
+    /* Sử dụng hình ảnh Roblox bạn vừa gửi */
+    background-image: url('https://cellphones.com.vn/sforum/wp-content/uploads/2024/04/hinh-nen-roblox-3.jpg');
+    background-size: cover;          /* Phủ kín màn hình */
+    background-position: center;     /* Căn giữa ảnh */
+    background-attachment: fixed;    /* Cố định hình nền khi cuộn trang */
+    background-repeat: no-repeat;
+    
+    /* Đảm bảo chữ trắng vẫn đọc tốt trên nền ảnh */
+    background-color: #0f0f13;
+}
+
+/* Lớp phủ tối để làm nổi bật các khung (cards) */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 15, 19, 0.7); /* Độ mờ 0.7 giúp ảnh nền chìm xuống */
+    z-index: -1;
+        }
+            
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
         :root {
