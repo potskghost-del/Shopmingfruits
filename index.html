@@ -701,7 +701,7 @@
             container.innerHTML = notis.map(n => `
                 <div class="noti-item ${n.type === 'admin' ? 'admin-msg' : ''}">
                     <div class="noti-time">${n.time}</div>
-                    <div style="font-weight: 600; color: #fff;">${n.type === 'admin' ? '📢 LỜI NHẮN TỪ ADMIN PHÚC:' : '⚙️ THÔNG BÁO:'}</div>
+                    <div style="font-weight: 600; color: #fff;">${n.type === 'admin' ? '📢 LỜI NHẮN TỪ MINGFRUIT:' : '⚙️ THÔNG BÁO:'}</div>
                     <div style="margin-top:5px; line-height: 1.5;">${n.text}</div>
                 </div>
             `).join('');
@@ -729,7 +729,7 @@
             if(!u) return alert("Hãy nhập tên người dùng!");
 
             if(!usersDB[u]) {
-                const c = confirm(`Tài khoản "${u}" không có sẵn. Tạo mới luôn chứ Phúc?`);
+                const c = confirm(`Tài khoản "${u}" không có sẵn.?`);
                 if(c) {
                     usersDB[u] = { password: "admin_created", vnd: 0, robux: 0, history: [], notis: [] };
                     saveDB();
@@ -787,7 +787,7 @@
         function sendAdminNotification() {
             if(!currentAdminTarget) return;
             const msg = document.getElementById('ad-msg-text').value.trim();
-            if(!msg) return alert("Phúc ơi chưa nhập nội dung tin nhắn kìa!");
+            if(!msg) return alert(" chưa nhập nội dung tin nhắn !");
 
             if(!usersDB[currentAdminTarget].notis) {
                 usersDB[currentAdminTarget].notis = [];
